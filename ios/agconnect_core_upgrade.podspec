@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'agconnect_core_upgrade'
-  s.version          = '0.0.1'
+  s.version          = '1.9.0+300'
   s.summary          = 'Flutter plugin for AppGallery Connect Core SDK.'
   s.description      = <<-DESC
 Flutter plugin for AppGallery Connect Core SDK.
