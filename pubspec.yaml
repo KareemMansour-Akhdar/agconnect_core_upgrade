@@ -1,4 +1,4 @@
-name: agconnect_core_upgrade
+name: agconnect_core
 description: Flutter plugin for AppGallery Connect Core SDK, Fork of Huawei agconnect_core (patched for Flutter v2 embedding & AGP 8+.
 version: 1.9.0+301
 homepage: https://www.a5dr.com

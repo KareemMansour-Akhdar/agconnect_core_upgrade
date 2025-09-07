@@ -3,7 +3,7 @@
 # Run `pod lib lint agconnect_core.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'agconnect_core'
+  s.name             = 'agconnect_core_upgrade'
   s.version          = '0.0.1'
   s.summary          = 'Flutter plugin for AppGallery Connect Core SDK.'
   s.description      = <<-DESC
