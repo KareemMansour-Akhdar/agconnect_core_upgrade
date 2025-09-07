@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import 'package:agconnect_core_upgrade/agconnect_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:agconnect_core/agconnect_core.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('com.huawei.flutter/agconnect_core');

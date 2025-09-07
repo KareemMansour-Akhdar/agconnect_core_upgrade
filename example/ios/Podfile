@@ -1,7 +1,5 @@
-# Uncomment this line to define a global platform for your project
 platform :ios, '11.0'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -10,63 +8,35 @@ project 'Runner', {
   'Release' => :release,
 }
 
-def parse_KV_file(file, separator='=')
-  file_abs_path = File.expand_path(file)
-  return {} unless File.exist?(file_abs_path)
-  generated_key_values = {}
-  skip_line_start_symbols = ["#", "/"]
-  File.foreach(file_abs_path) do |line|
-    next if skip_line_start_symbols.any? { |symbol| line =~ /^\s*#{symbol}/ }
-    next unless line.include?(separator)
-    key, value = line.split(separator, 2).map(&:strip)
-    next if key.nil? || value.nil?
-    generated_key_values[key] = value
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
   end
-  generated_key_values
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}"
 end
 
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
 target 'Runner' do
-  copied_flutter_dir = File.join(__dir__, 'Flutter')
-  copied_framework_path = File.join(copied_flutter_dir, 'Flutter.framework')
-  copied_podspec_path = File.join(copied_flutter_dir, 'Flutter.podspec')
+  use_frameworks!
+  use_modular_headers!
 
-  unless File.exist?(copied_framework_path) && File.exist?(copied_podspec_path)
-    generated_xcode_build_settings_path = File.join(copied_flutter_dir, 'Generated.xcconfig')
-    if File.exist?(generated_xcode_build_settings_path)
-      generated_xcode_build_settings = parse_KV_file(generated_xcode_build_settings_path)
-      cached_framework_dir = generated_xcode_build_settings['FLUTTER_FRAMEWORK_DIR']
-      if cached_framework_dir && !cached_framework_dir.empty?
-        FileUtils.cp_r(File.join(cached_framework_dir, 'Flutter.framework'), copied_flutter_dir) unless File.exist?(copied_framework_path)
-        FileUtils.cp(File.join(cached_framework_dir, 'Flutter.podspec'), copied_flutter_dir) unless File.exist?(copied_podspec_path)
-      else
-        puts "[!] Warning: FLUTTER_FRAMEWORK_DIR not found in Generated.xcconfig. If you encounter build errors, run 'flutter pub get' and try again."
-      end
-    else
-      puts "[!] Warning: Generated.xcconfig must exist. If you're running pod install manually, make sure flutter pub get is executed first."
-    end
-  end
-
-  # Keep pod path relative so it can be checked into Podfile.lock.
-  pod 'Flutter', :path => 'Flutter'
-
-  # Plugin Pods
-
-  # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
-  # referring to absolute paths on developers' machines.
-  system('rm -rf .symlinks')
-  system('mkdir -p .symlinks/plugins')
-  plugin_pods = parse_KV_file('../.flutter-plugins')
-  plugin_pods.each do |name, path|
-    symlink = File.join('.symlinks', 'plugins', name)
-    File.symlink(path, symlink)
-    pod name, :path => File.join(symlink, 'ios')
-  end
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
     end
   end
 end
