@@ -24,9 +24,9 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
-    namespace 'com.huawei.agconnectcore'
+     compileSdkVersion 36
+     buildToolsVersion "34.0.0"
+     namespace 'com.huawei.agconnectcore'
 
     defaultConfig {
         minSdkVersion 18
